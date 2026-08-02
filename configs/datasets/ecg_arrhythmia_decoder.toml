@@ -1,0 +1,68 @@
+DEBUG = false
+
+task = "classification"
+model = "medtsllm"
+# Same sequence length and patching as medtsllm2's PTB-XL decoder config.
+history_len = 512
+pred_len = 512
+
+[data]
+dataset = "ECG-ARRHYTHMIA"
+mode = "multivariate"
+cols = "all"
+normalize = true
+step = 512
+
+[training]
+epochs = 20
+batch_size = 16
+optimizer = "adam"
+learning_rate = 1e-4
+dropout = 0.1
+loss = "ce"
+eval_metric = "accuracy"
+eval_metric_direction = "max"
+# Optional for class imbalance:
+# class_weights = true
+
+[datasets.ECG-ARRHYTHMIA]
+# Change this to your downloaded ecg-arrhythmia-1.0.0 directory.
+root = "data/ecg-arrhythmia-1.0.0"
+processed_dir = "processed_4class_512"
+version = "1.0.0"
+
+[models.medtsllm]
+d_model = 32
+d_ff = 128
+n_heads = 8
+num_tokens = 1024
+covariate_mode = "concat"
+embedding_downsample_mode = "linear"
+
+[models.medtsllm.patching]
+patch_len = 32
+stride = 16
+
+[models.medtsllm.prompting]
+input_stats_dim = 0
+input_stats_select = "all"
+dataset = true
+task = true
+clip = true
+input_stats = false
+examples = false
+
+[models.medtsllm.llm]
+enabled = true
+# Exact decoder-only backbone used by medtsllm2's ptbxl_decoder.toml.
+llm = "meta-llama/Llama-2-7b-hf"
+load_in_4bit = false
+load_in_8bit = false
+llm_layers = -1
+
+[setup]
+seed = 0
+device = "auto"
+dtype = "mixed"
+num_workers = "auto"
+logger = "print"
