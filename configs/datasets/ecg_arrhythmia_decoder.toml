@@ -26,10 +26,10 @@ eval_metric_direction = "max"
 # class_weights = true
 
 [datasets.ECG-ARRHYTHMIA]
-# Change this to your downloaded ecg-arrhythmia-1.0.0 directory.
-root = "data/ecg-arrhythmia-1.0.0"
-processed_dir = "processed_4class_512"
-version = "1.0.0"
+root = "data/ecg-arrhythmia/ecg-arrhythmia"
+processed_dir = "processed/rhythm_single"
+label_mode = "single_unique_rhythm"
+moment_windows = 0
 
 [models.medtsllm]
 d_model = 32
